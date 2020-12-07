@@ -135,7 +135,7 @@ namespace NorthwindConsole
                             }
                         }
                     }
-                    else if (choice == "5")//add a product
+                    else if (choice == "5")// x add a product
                     {
                         // public int ProductId { get; set; }
                         // public string ProductName { get; set; }
@@ -217,7 +217,7 @@ namespace NorthwindConsole
                             logger.Error($"Incorrect datatype entered:");
                         }
                     }
-                    else if (choice == "6")//edit a product
+                    else if (choice == "6")// x edit a product
                     {
                         //Product product = new Product();
                         try
@@ -350,18 +350,19 @@ namespace NorthwindConsole
                     }
                     else if (choice == "7")//display all products
                     {
-                        //ask for 
-                        //all products?
-                        //discontinued products?
-                        //active products?
+                        Console.WriteLine("What Products would you to like to display?");
+                        Console.WriteLine("1) All Products");
+                        Console.WriteLine("2) Active Products");
+                        Console.WriteLine("3) Discontinued Products");
                         //display
                     }
                     else if (choice == "8")//display specific product
                     {
                         //ask for id
+                        Console.WriteLine("Enter ProductID of the Product would you to like to display?");
                         //display
                     }
-                    else if (choice == "9")//edit a category
+                    else if (choice == "9")// x edit a category
                     {
                         //Product product = new Product();
                         try
@@ -426,31 +427,34 @@ namespace NorthwindConsole
                             logger.Error($"Incorrect datatype entered:");
                         }
                     }
-                    else if (choice == "10")
-                    {//display all cats... this is already # 1 or # 4
+                    else if (choice == "10")//display all cats
+                    {//... this is already # 1 or # 4
 
                     }
-                    else if (choice == "11")
-                    {//display all cats and their active products
+                    else if (choice == "11")//display all cats and their active products
+                    {                   
                         //grab all cats include products.where discontinued ==false
                     }
-                    else if (choice == "12")
-                    {//display specific cat and all related active products
+                    else if (choice == "12")//display specific cat and all related active products
+                    {
                         //ask for id
+                        Console.WriteLine("Enter CategoryID of the Category would you to like to display?");                          
                         //check for id
                         //get cat include products where discontinued == false
                         //display
                     }
-                    else if (choice == "13")
-                    {//delete products
+                    else if (choice == "13")//delete products
+                    {
                         //orphans are orderdetails rows
                         //just wipe em
                         //ask for pID
+                        Console.WriteLine("Enter ProductID of the Product would you to like to DELETE?");
                         //delete rows from orderdetails first
                         //delete product
                     }
-                    else if (choice == "14")
-                    {//delete catagories
+                    else if (choice == "14")//delete catagories
+                    {
+                        Console.WriteLine("Enter CategoryID of the Category would you to like to DELETE?");
                         //loads of product orphans
                         //just wipe em
                         //ask for cID
