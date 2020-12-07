@@ -112,16 +112,16 @@ namespace NorthwindConsole
                         logger.Info($"CategoryId {id} selected");
                         //lazy loading, will not populate the category.Products list
                         //Category category = db.Categories.FirstOrDefault(c => c.CategoryId == id);
-                        
+
                         //eager loading, will load Products list
                         Category category = db.Categories.Include("Products").FirstOrDefault(c => c.CategoryId == id);
-                        
+
                         Console.WriteLine($"{category.CategoryName} - {category.Description}");
                         foreach (Product p in category.Products)
                         {
                             Console.WriteLine(p.ProductName);
-                        }                                                
-                    }                                        
+                        }
+                    }
                     else if (choice == "4")//display all cat+prod
                     {
                         var db = new NorthwindConsole_32_WHContext();
@@ -135,83 +135,330 @@ namespace NorthwindConsole
                             }
                         }
                     }
-                    else if (choice == "5"){//add a product
-        // public int ProductId { get; set; }
-        // public string ProductName { get; set; }
-        // public int? SupplierId { get; set; }
-        // public int? CategoryId { get; set; }
-        // public string QuantityPerUnit { get; set; }
-        // public decimal? UnitPrice { get; set; }
-        // public short? UnitsInStock { get; set; }
-        // public short? UnitsOnOrder { get; set; }
-        // public short? ReorderLevel { get; set; }
-        // public bool Discontinued { get; set; }
-                        //need to find valid Foreign key ids otherise adding will die
-                        var db = new NorthwindConsole_32_WHContext();
-                        var suppIdsQuery = db.Suppliers;
-                        
-                        foreach(var s in suppIdsQuery) {
-                            Console.WriteLine($"{s.SupplierId}");
-                        }
+                    else if (choice == "5")//add a product
+                    {
+                        // public int ProductId { get; set; }
+                        // public string ProductName { get; set; }
+                        // public int? SupplierId { get; set; }
+                        // public int? CategoryId { get; set; }
+                        // public string QuantityPerUnit { get; set; }
+                        // public decimal? UnitPrice { get; set; }
+                        // public short? UnitsInStock { get; set; }
+                        // public short? UnitsOnOrder { get; set; }
+                        // public short? ReorderLevel { get; set; }
+                        // public bool Discontinued { get; set; }
                         Product product = new Product();
-                        Console.WriteLine("Enter ProductName:");
-                        product.ProductName = Console.ReadLine();
-                        Console.WriteLine("Enter the SupplierId :");
-                        product.SupplierId = int.Parse(Console.ReadLine());
-                        Console.WriteLine("Enter the CategoryId :");
-                        product.CategoryId = int.Parse(Console.ReadLine());
-                        Console.WriteLine("Enter the QuantityPerUnit :");
-                        product.QuantityPerUnit = Console.ReadLine();
-                        Console.WriteLine("Enter the UnitPrice :");
-                        product.UnitPrice = decimal.Parse(Console.ReadLine());
-                        Console.WriteLine("Enter the UnitsInStock :");
-                        product.UnitsInStock = short.Parse(Console.ReadLine());
-                        Console.WriteLine("Enter the UnitsOnOrder :");
-                        product.UnitsOnOrder = short.Parse(Console.ReadLine());
-                        Console.WriteLine("Enter the ReorderLevel :");
-                        product.ReorderLevel = short.Parse(Console.ReadLine());
-                        Console.WriteLine("Enter the Discontinued Boolean :");
-                        product.Discontinued = bool.Parse(Console.ReadLine());
+                        try
+                        { //might not need this, the db doesn't care about junk values
 
-                        ValidationContext context = new ValidationContext(product, null, null);
-                        List<ValidationResult> results = new List<ValidationResult>();
+                            Console.WriteLine("Enter ProductName:");
+                            product.ProductName = Console.ReadLine();
+                            Console.WriteLine("Enter the SupplierId :");
+                            product.SupplierId = int.Parse(Console.ReadLine());
+                            Console.WriteLine("Enter the CategoryId :");
+                            product.CategoryId = int.Parse(Console.ReadLine());
+                            Console.WriteLine("Enter the QuantityPerUnit :");
+                            product.QuantityPerUnit = Console.ReadLine();
+                            Console.WriteLine("Enter the UnitPrice :");
+                            product.UnitPrice = decimal.Parse(Console.ReadLine());
+                            Console.WriteLine("Enter the UnitsInStock :");
+                            product.UnitsInStock = short.Parse(Console.ReadLine());
+                            Console.WriteLine("Enter the UnitsOnOrder :");
+                            product.UnitsOnOrder = short.Parse(Console.ReadLine());
+                            Console.WriteLine("Enter the ReorderLevel :");
+                            product.ReorderLevel = short.Parse(Console.ReadLine());
+                            Console.WriteLine("Enter the Discontinued Status (true / false) :");
+                            product.Discontinued = bool.Parse(Console.ReadLine());
 
-                        var isValid = Validator.TryValidateObject(product, context, results, true);
-                        if (isValid)
-                        {
-                            //var db = new NorthwindConsole_32_WHContext();
-                            db = new NorthwindConsole_32_WHContext();
-                            // check for unique name
-                            if (db.Products.Any(c => c.ProductName == product.ProductName))
+                            ValidationContext context = new ValidationContext(product, null, null);
+                            List<ValidationResult> results = new List<ValidationResult>();
+
+                            var isValid = Validator.TryValidateObject(product, context, results, true);
+                            if (isValid)
                             {
-                                // generate validation error
-                                isValid = false;
-                                results.Add(new ValidationResult("Product Name exists", new string[] { "CategoryName" }));
+                                var db = new NorthwindConsole_32_WHContext();
+                                // db = new NorthwindConsole_32_WHContext();
+                                // check for unique name
+                                if (db.Products.Any(c => c.ProductName == product.ProductName))
+                                {
+                                    // generate validation error
+                                    isValid = false;
+                                    results.Add(new ValidationResult("Product Name exists", new string[] { "CategoryName" }));
+                                }
+                                else if (!db.Suppliers.Any(s => s.SupplierId == product.SupplierId))
+                                {
+                                    //check for valid supplier id
+                                    logger.Error("Invalid SupplierID");
+                                    isValid = false;
+                                }
+                                else if (!db.Categories.Any(c => c.CategoryId == product.CategoryId))
+                                {
+                                    logger.Error("Invalid CategoryID");
+                                    isValid = false;
+                                }
+                                else
+                                {
+                                    logger.Info("Validation passed");
+                                    db.AddProduct(product);
+                                    logger.Info($"Product - {product.ProductName} added");
+                                }
+                            }
+                            if (!isValid)
+                            {
+                                foreach (var result in results)
+                                {
+                                    logger.Error($"{result.MemberNames.First()} : {result.ErrorMessage}");
+                                }
+                            }
+                        }
+                        catch (System.FormatException)
+                        {
+
+                            logger.Error($"Incorrect datatype entered:");
+                        }
+                    }
+                    else if (choice == "6")//edit a product
+                    {
+                        //Product product = new Product();
+                        try
+                        {
+                            var db = new NorthwindConsole_32_WHContext();
+                            Console.WriteLine("Enter ProductID of Product to Edit:");
+                            int pid = int.Parse(Console.ReadLine());
+                            //grab from db
+                            Product product = db.Products.SingleOrDefault(p => p.ProductId == pid);
+                            Boolean hasChanges = false;
+                            if (product != null)
+                            {
+                                Console.WriteLine("Press Enter to skip field, or type in new value");
+                                Console.WriteLine($"ProductName: {product.ProductName} ?");
+                                string productName = Console.ReadLine();
+                                if (productName != "")
+                                {
+                                    product.ProductName = productName;
+                                    hasChanges = true;
+                                }
+
+                                Console.WriteLine($"SupplierId : {product.SupplierId} ?");
+                                string supplierId = Console.ReadLine();
+                                if (supplierId != "")
+                                {
+                                    product.SupplierId = int.Parse(supplierId);
+                                    hasChanges = true;
+                                }
+
+                                Console.WriteLine($"CategoryId : {product.CategoryId} ?");
+                                string categoryId = Console.ReadLine();
+                                if (categoryId != "")
+                                {
+                                    product.CategoryId = int.Parse(categoryId);
+                                    hasChanges = true;
+                                }
+                                Console.WriteLine($"QuantityPerUnit : {product.QuantityPerUnit} ?");
+                                string quantityPerUnit = Console.ReadLine();
+                                if (quantityPerUnit != "")
+                                {
+                                    product.QuantityPerUnit = quantityPerUnit;
+                                    hasChanges = true;
+                                }
+                                Console.WriteLine($"UnitPrice : {product.UnitPrice} ?");
+                                string unitPrice = Console.ReadLine();
+                                if (unitPrice != "")
+                                {
+                                    product.UnitPrice = decimal.Parse(unitPrice);
+                                    hasChanges = true;
+                                }
+                                Console.WriteLine($"UnitsInStock : {product.UnitsInStock} ?");
+                                string unitsInStock = Console.ReadLine();
+                                if (unitsInStock != "")
+                                {
+                                    product.UnitsInStock = short.Parse(unitsInStock);
+                                    hasChanges = true;
+                                }
+                                Console.WriteLine($"UnitsOnOrder : {product.UnitsOnOrder} ?");
+                                string unitsOnOrder = Console.ReadLine();
+                                if (unitsOnOrder != "")
+                                {
+                                    product.UnitsOnOrder = short.Parse(unitsOnOrder);
+                                    hasChanges = true;
+                                }
+                                Console.WriteLine($"ReorderLevel : {product.ReorderLevel} ?");
+                                string reorderLevel = Console.ReadLine();
+                                if (reorderLevel != "")
+                                {
+                                    product.ReorderLevel = short.Parse(reorderLevel);
+                                    hasChanges = true;
+                                }
+                                Console.WriteLine($"Discontinued : {product.Discontinued} ?");
+                                string discontinued = Console.ReadLine();
+                                if (discontinued != "")
+                                {
+                                    product.Discontinued = bool.Parse(discontinued);
+                                    hasChanges = true;
+                                }
+
+                                if (hasChanges)
+                                {
+                                    ValidationContext context = new ValidationContext(product, null, null);
+                                    List<ValidationResult> results = new List<ValidationResult>();
+
+                                    var isValid = Validator.TryValidateObject(product, context, results, true);
+                                    if (isValid)
+                                    {
+                                        if (!db.Suppliers.Any(s => s.SupplierId == product.SupplierId))
+                                        {
+                                            //check for valid supplier id
+                                            logger.Error("Invalid SupplierID");
+                                            isValid = false;
+                                        }
+                                        else if (!db.Categories.Any(c => c.CategoryId == product.CategoryId))
+                                        {
+                                            logger.Error("Invalid CategoryID");
+                                            isValid = false;
+                                        }
+                                        else
+                                        {
+                                            logger.Info("Validation passed");
+                                            //var changeMe = db.Products.SingleOrDefault(p => p.ProductId == product.ProductId);
+                                            //changeMe.
+                                            db.SaveChanges();
+                                            logger.Info($"Product - {product.ProductName} updated");
+                                        }
+                                    }
+                                    if (!isValid)
+                                    {
+                                        foreach (var result in results)
+                                        {
+                                            logger.Error($"{result.MemberNames.First()} : {result.ErrorMessage}");
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    logger.Info("No Changes Entered.");
+                                }
                             }
                             else
                             {
-                                logger.Info("Validation passed");
-                                db.AddProduct(product);
-                                logger.Info($"Product - {product.ProductName} added");
+                                logger.Error($"ProductID: {pid} not found/valid");
                             }
                         }
-                        if (!isValid)
+                        catch (System.FormatException)
                         {
-                            foreach (var result in results)
-                            {
-                                logger.Error($"{result.MemberNames.First()} : {result.ErrorMessage}");
-                            }
+                            logger.Error($"Incorrect datatype entered:");
                         }
                     }
-                    else if (choice == "6"){}
-                    else if (choice == "7"){}
-                    else if (choice == "8"){}
-                    else if (choice == "9"){}
-                    else if (choice == "10"){}
-                    else if (choice == "11"){}
-                    else if (choice == "12"){}
-                    else if (choice == "13"){}
-                    else if (choice == "14"){}
+                    else if (choice == "7")//display all products
+                    {
+                        //ask for 
+                        //all products?
+                        //discontinued products?
+                        //active products?
+                        //display
+                    }
+                    else if (choice == "8")//display specific product
+                    {
+                        //ask for id
+                        //display
+                    }
+                    else if (choice == "9")//edit a category
+                    {
+                        //Product product = new Product();
+                        try
+                        {
+                            var db = new NorthwindConsole_32_WHContext();
+                            Console.WriteLine("Enter CategoryID of Category to Edit:");
+                            int cid = int.Parse(Console.ReadLine());
+                            //grab from db
+                            Category cat = db.Categories.SingleOrDefault(c => c.CategoryId == cid);
+                            Boolean hasChanges = false;
+                            if (cat != null)
+                            {
+                                Console.WriteLine("Press Enter to skip field, or type in new value");
+                                Console.WriteLine($"CategoryName: {cat.CategoryName} ?");
+                                string categoryName = Console.ReadLine();
+                                if (categoryName != "")
+                                {
+                                    cat.CategoryName = categoryName;
+                                    hasChanges = true;
+                                }
+
+                                Console.WriteLine($"Description : {cat.Description} ?");
+                                string description = Console.ReadLine();
+                                if (description != "")
+                                {
+                                    cat.Description = description;
+                                    hasChanges = true;
+                                }
+                                if (hasChanges)
+                                {
+                                    ValidationContext context = new ValidationContext(cat, null, null);
+                                    List<ValidationResult> results = new List<ValidationResult>();
+
+                                    var isValid = Validator.TryValidateObject(cat, context, results, true);
+                                    if (isValid)
+                                    {
+                                        logger.Info("Validation passed");
+                                        db.SaveChanges();
+                                        logger.Info($"Category - {cat.CategoryName} updated");
+
+                                    }
+                                    if (!isValid)
+                                    {
+                                        foreach (var result in results)
+                                        {
+                                            logger.Error($"{result.MemberNames.First()} : {result.ErrorMessage}");
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    logger.Info("No Changes Entered.");
+                                }
+                            }
+                            else
+                            {
+                                logger.Error($"ProductID: {cid} not found/valid");
+                            }
+                        }
+                        catch (System.FormatException)
+                        {
+                            logger.Error($"Incorrect datatype entered:");
+                        }
+                    }
+                    else if (choice == "10")
+                    {//display all cats... this is already # 1 or # 4
+
+                    }
+                    else if (choice == "11")
+                    {//display all cats and their active products
+                        //grab all cats include products.where discontinued ==false
+                    }
+                    else if (choice == "12")
+                    {//display specific cat and all related active products
+                        //ask for id
+                        //check for id
+                        //get cat include products where discontinued == false
+                        //display
+                    }
+                    else if (choice == "13")
+                    {//delete products
+                        //orphans are orderdetails rows
+                        //just wipe em
+                        //ask for pID
+                        //delete rows from orderdetails first
+                        //delete product
+                    }
+                    else if (choice == "14")
+                    {//delete catagories
+                        //loads of product orphans
+                        //just wipe em
+                        //ask for cID
+                        //get pIDs for cID
+                        //delete product rows from orderdetails
+                        //delete products
+                        //delete category
+                    }
                     Console.WriteLine();
                 } while (choice.ToLower() != "q");
             }
@@ -221,5 +468,5 @@ namespace NorthwindConsole
             }
             logger.Info("Program ended");
         }
-    }                         
+    }
 }

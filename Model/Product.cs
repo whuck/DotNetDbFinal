@@ -17,7 +17,9 @@ namespace NorthwindConsole.Model
         public string ProductName { get; set; }
         [Required(ErrorMessage="Product Name cannot be null")]
         public int? SupplierId { get; set; }
+        [Required(ErrorMessage="Foreign Key SupplierID must be a valid ID")]
         public int? CategoryId { get; set; }
+        [Required(ErrorMessage="Foreign Key CategoryId must be a valid ID")]
         public string QuantityPerUnit { get; set; }
         public decimal? UnitPrice { get; set; }
         public short? UnitsInStock { get; set; }
