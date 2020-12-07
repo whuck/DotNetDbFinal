@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -14,6 +15,7 @@ namespace NorthwindConsole.Model
 
         public int ProductId { get; set; }
         public string ProductName { get; set; }
+        [Required(ErrorMessage="Product Name cannot be null")]
         public int? SupplierId { get; set; }
         public int? CategoryId { get; set; }
         public string QuantityPerUnit { get; set; }

@@ -84,7 +84,7 @@ namespace NorthwindConsole
                             else
                             {
                                 logger.Info("Validation passed");
-                                db.Add(category);
+                                db.AddCategory(category);
                             }
                         }
                         if (!isValid)
@@ -135,6 +135,83 @@ namespace NorthwindConsole
                             }
                         }
                     }
+                    else if (choice == "5"){//add a product
+        // public int ProductId { get; set; }
+        // public string ProductName { get; set; }
+        // public int? SupplierId { get; set; }
+        // public int? CategoryId { get; set; }
+        // public string QuantityPerUnit { get; set; }
+        // public decimal? UnitPrice { get; set; }
+        // public short? UnitsInStock { get; set; }
+        // public short? UnitsOnOrder { get; set; }
+        // public short? ReorderLevel { get; set; }
+        // public bool Discontinued { get; set; }
+                        //need to find valid Foreign key ids otherise adding will die
+                        var db = new NorthwindConsole_32_WHContext();
+                        var suppIdsQuery = db.Suppliers;
+                        
+                        foreach(var s in suppIdsQuery) {
+                            Console.WriteLine($"{s.SupplierId}");
+                        }
+                        Product product = new Product();
+                        Console.WriteLine("Enter ProductName:");
+                        product.ProductName = Console.ReadLine();
+                        Console.WriteLine("Enter the SupplierId :");
+                        product.SupplierId = int.Parse(Console.ReadLine());
+                        Console.WriteLine("Enter the CategoryId :");
+                        product.CategoryId = int.Parse(Console.ReadLine());
+                        Console.WriteLine("Enter the QuantityPerUnit :");
+                        product.QuantityPerUnit = Console.ReadLine();
+                        Console.WriteLine("Enter the UnitPrice :");
+                        product.UnitPrice = decimal.Parse(Console.ReadLine());
+                        Console.WriteLine("Enter the UnitsInStock :");
+                        product.UnitsInStock = short.Parse(Console.ReadLine());
+                        Console.WriteLine("Enter the UnitsOnOrder :");
+                        product.UnitsOnOrder = short.Parse(Console.ReadLine());
+                        Console.WriteLine("Enter the ReorderLevel :");
+                        product.ReorderLevel = short.Parse(Console.ReadLine());
+                        Console.WriteLine("Enter the Discontinued Boolean :");
+                        product.Discontinued = bool.Parse(Console.ReadLine());
+
+                        ValidationContext context = new ValidationContext(product, null, null);
+                        List<ValidationResult> results = new List<ValidationResult>();
+
+                        var isValid = Validator.TryValidateObject(product, context, results, true);
+                        if (isValid)
+                        {
+                            //var db = new NorthwindConsole_32_WHContext();
+                            db = new NorthwindConsole_32_WHContext();
+                            // check for unique name
+                            if (db.Products.Any(c => c.ProductName == product.ProductName))
+                            {
+                                // generate validation error
+                                isValid = false;
+                                results.Add(new ValidationResult("Product Name exists", new string[] { "CategoryName" }));
+                            }
+                            else
+                            {
+                                logger.Info("Validation passed");
+                                db.AddProduct(product);
+                                logger.Info($"Product - {product.ProductName} added");
+                            }
+                        }
+                        if (!isValid)
+                        {
+                            foreach (var result in results)
+                            {
+                                logger.Error($"{result.MemberNames.First()} : {result.ErrorMessage}");
+                            }
+                        }
+                    }
+                    else if (choice == "6"){}
+                    else if (choice == "7"){}
+                    else if (choice == "8"){}
+                    else if (choice == "9"){}
+                    else if (choice == "10"){}
+                    else if (choice == "11"){}
+                    else if (choice == "12"){}
+                    else if (choice == "13"){}
+                    else if (choice == "14"){}
                     Console.WriteLine();
                 } while (choice.ToLower() != "q");
             }

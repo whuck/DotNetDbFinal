@@ -18,6 +18,24 @@ namespace NorthwindConsole.Model
         {
         }
 
+        public void AddCategory(Category c) {
+            this.Categories.Add(c);
+            this.SaveChanges();
+        }
+
+        public void AddProduct(Product p) {
+            this.Products.Add(p);
+            this.SaveChanges();
+        }
+        public void DeleteCategory(Category c) {
+            this.Categories.Remove(c);
+            this.SaveChanges();
+        }
+        public void DeleteProduct(Product p) {
+            this.Products.Remove(p);
+            this.SaveChanges();
+        }
+
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
