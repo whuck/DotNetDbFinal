@@ -26,11 +26,26 @@ namespace NorthwindConsole
                     Console.WriteLine("2) Add Category");
                     Console.WriteLine("3) Display Category and related products");
                     Console.WriteLine("4) Display all Categories and their related products");
+                    //newstuff C threshold
+                    Console.WriteLine("5) Add Product");
+                    Console.WriteLine("6) Edit Product");
+                    Console.WriteLine("7) Display All Products");
+                    Console.WriteLine("8) Display a Product");
+                    //newstuff B threshold
+                    //add Category... done?
+                    Console.WriteLine("9) Edit Category");
+                    Console.WriteLine("10) Display All Categories (Name & Desc.)");
+                    Console.WriteLine("11) Display All Categories and their active Product Data");
+                    Console.WriteLine("12) Display a Category and its active Product data");
+                    //A threshold
+                    Console.WriteLine("13) Delete a Product");
+                    Console.WriteLine("14) Delete a Category");
+                    //use data annotations and handle ALL errors
                     Console.WriteLine("\"q\" to quit");
                     choice = Console.ReadLine();
                     Console.Clear();
                     logger.Info($"Option {choice} selected");
-                    if (choice == "1")
+                    if (choice == "1")//display cats
                     {
                         var db = new NorthwindConsole_32_WHContext();
                         var query = db.Categories.OrderBy(p => p.CategoryName);
@@ -44,7 +59,7 @@ namespace NorthwindConsole
                         }
                         Console.ForegroundColor = ConsoleColor.White;
                     }
-                    else if (choice == "2")
+                    else if (choice == "2")//add cats
                     {
                         Category category = new Category();
                         Console.WriteLine("Enter Category Name:");
@@ -69,7 +84,7 @@ namespace NorthwindConsole
                             else
                             {
                                 logger.Info("Validation passed");
-                                // TODO: save category to db
+                                db.Add(category);
                             }
                         }
                         if (!isValid)
@@ -80,7 +95,7 @@ namespace NorthwindConsole
                             }
                         }
                     }
-                    else if (choice == "3")
+                    else if (choice == "3")//display cat+prod
                     {
                         var db = new NorthwindConsole_32_WHContext();
                         var query = db.Categories.OrderBy(p => p.CategoryId);
@@ -107,7 +122,7 @@ namespace NorthwindConsole
                             Console.WriteLine(p.ProductName);
                         }                                                
                     }                                        
-                    else if (choice == "4")
+                    else if (choice == "4")//display all cat+prod
                     {
                         var db = new NorthwindConsole_32_WHContext();
                         var query = db.Categories.Include("Products").OrderBy(p => p.CategoryId);
