@@ -539,7 +539,6 @@ namespace NorthwindConsole
                     {
                         //orphans are orderdetails rows
                         //just wipe em
-                        
                         try
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
@@ -579,9 +578,12 @@ namespace NorthwindConsole
                             Console.ForegroundColor = ConsoleColor.White;  
                             logger.Error($"Incorrect datatype entered:");
                         }
+                        catch (Exception e) {
+                            logger.Error(e.Message);
+                        }
                         Console.ForegroundColor = ConsoleColor.White;                    
                     }
-                    else if (choice == "14")//delete catagories
+                    else if (choice == "14")// x delete catagories
                     {
                         //orphans are orderdetails rows
                         //just wipe em
@@ -597,22 +599,24 @@ namespace NorthwindConsole
                             
                             if (category != null)
                             {
-                                var orderDetails = db.OrderDetails.Where(o => o.ProductId == category.CategoryId);
-                                // var orderDetails = db.OrderDetails
-                                //                     .Join(db.Products,
-                                //                         o => o.ProductId,
-                                //                         p => p.ProductId,
-                                //                         (o,p) => new {OrderDetail = o, Product = p })
-                                //                     .Where(asdf=> asdf.CategoryId == cid);
+                                var ods = db.OrderDetails.FromSqlInterpolated($"SELECT o.Discount, o.OrderId,o.ProductId,o.UnitPrice,o.Quantity,o.OrderDetailsId FROM OrderDetails o JOIN Products p ON o.ProductId = p.ProductId JOIN Categories c  on p.CategoryId = c.CategoryId WHERE c.CategoryId = {cid}").ToList();
+                                Console.WriteLine($"Orphan OrderDetailsFound : {ods.Count}");
+                                foreach (var od in ods) {
+                                    Console.WriteLine($"{od.OrderDetailsId}::");
+                                }
                                 var products = db.Products.Where(p=>p.CategoryId == cid);
-                                Console.WriteLine($"Found {orderDetails.Count()} OrderDetail orphans");
+
+                                Console.WriteLine($"Found {ods.Count()} OrderDetails orphans");
                                 Console.WriteLine($"Found {products.Count()} Product orphans");
                                 Console.WriteLine($"Deleting Product {category.CategoryId} will delete these as well are you sure? Y/N");
                                 string amSure = Console.ReadLine().ToUpper();
 
                                 if (amSure=="Y")
                                 {
-                                    db.OrderDetails.RemoveRange(db.OrderDetails.Where(x=>x.ProductId==category.CategoryId));
+                                    foreach(var od in ods) {
+                                        db.OrderDetails.Remove(od);
+                                    }
+
                                     logger.Info($"OrderDetails with CategoryId{category.CategoryId} deleted!");
                                     db.SaveChanges();
 
@@ -637,6 +641,9 @@ namespace NorthwindConsole
                         {
                             Console.ForegroundColor = ConsoleColor.White;  
                             logger.Error($"Incorrect datatype entered:");
+                        }
+                        catch (Exception e) {
+                            logger.Error(e.Message);
                         }
                         Console.ForegroundColor = ConsoleColor.White;  
                     }

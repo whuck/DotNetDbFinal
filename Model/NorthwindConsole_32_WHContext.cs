@@ -33,12 +33,13 @@ namespace NorthwindConsole.Model
         }
         public void DeleteProduct(Product p) {
             this.Products.Remove(p);
-            //this.SaveChanges();
+            this.SaveChanges();
         }
         public void DeleteOrderDetail(OrderDetail o) {
             this.OrderDetails.Remove(o);
-            //this.SaveChanges();
+            this.SaveChanges();
         }
+
 
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
