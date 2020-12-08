@@ -22,10 +22,10 @@ namespace NorthwindConsole
                 string choice;
                 do
                 {
-                    Console.WriteLine("1) Display Categories");
+                    Console.WriteLine("1) Display All Categories (Name & Desc.)");
                     Console.WriteLine("2) Add Category");
-                    Console.WriteLine("3) Display Category and related products");
-                    Console.WriteLine("4) Display all Categories and their related products");
+                    Console.WriteLine("3) Display a Category and its active Product data");
+                    Console.WriteLine("4) Display All Categories and their active Product Data");
                     //newstuff C threshold
                     Console.WriteLine("5) Add Product");
                     Console.WriteLine("6) Edit Product");
@@ -34,12 +34,9 @@ namespace NorthwindConsole
                     //newstuff B threshold
                     //add Category... done?
                     Console.WriteLine("9) Edit Category");
-                    Console.WriteLine("10)#1 Display All Categories (Name & Desc.)");
-                    Console.WriteLine("11)#4 Display All Categories and their active Product Data");
-                    Console.WriteLine("12)#3 Display a Category and its active Product data");
                     //A threshold
-                    Console.WriteLine("13) Delete a Product");
-                    Console.WriteLine("14) Delete a Category");
+                    Console.WriteLine("10) Delete a Product");
+                    Console.WriteLine("11) Delete a Category");
                     //use data annotations and handle ALL errors
                     Console.WriteLine("\"q\" to quit");
                     choice = Console.ReadLine();
@@ -131,7 +128,7 @@ namespace NorthwindConsole
                         }
                         Console.ForegroundColor = ConsoleColor.White;
                     }
-                    else if (choice == "4")//display all cat+prod
+                    else if (choice == "4")// x display all cat+prod
                     {
                         var db = new NorthwindConsole_32_WHContext();
                         var query = db.Categories.Include("Products").OrderBy(p => p.CategoryId);
@@ -155,16 +152,6 @@ namespace NorthwindConsole
                     }
                     else if (choice == "5")// x add a product
                     {
-                        // public int ProductId { get; set; }
-                        // public string ProductName { get; set; }
-                        // public int? SupplierId { get; set; }
-                        // public int? CategoryId { get; set; }
-                        // public string QuantityPerUnit { get; set; }
-                        // public decimal? UnitPrice { get; set; }
-                        // public short? UnitsInStock { get; set; }
-                        // public short? UnitsOnOrder { get; set; }
-                        // public short? ReorderLevel { get; set; }
-                        // public bool Discontinued { get; set; }
                         Product product = new Product();
                         try
                         { //might not need this, the db doesn't care about junk values
@@ -233,6 +220,9 @@ namespace NorthwindConsole
                         {
                             Console.ForegroundColor = ConsoleColor.White;  
                             logger.Error($"Incorrect datatype entered:");
+                        }
+                        catch (Exception e) {
+                            logger.Error(e.Message);
                         }
                     }
                     else if (choice == "6")// x edit a product
@@ -368,6 +358,9 @@ namespace NorthwindConsole
                             Console.ForegroundColor = ConsoleColor.White;  
                             logger.Error($"Incorrect datatype entered:");
                         }
+                        catch (Exception e) {
+                            logger.Error(e.Message);
+                        }
                     }
                     else if (choice == "7")// x display all products
                     {
@@ -424,6 +417,9 @@ namespace NorthwindConsole
                             Console.ForegroundColor = ConsoleColor.White;  
                             Console.WriteLine("ProductID must be an integer");
                         }
+                        catch (Exception e) {
+                            logger.Error(e.Message);
+                        }
                     }
                     else if (choice == "8")// x display specific product
                     {
@@ -449,6 +445,9 @@ namespace NorthwindConsole
                         }catch (System.FormatException) {
                             Console.ForegroundColor = ConsoleColor.White;  
                             Console.WriteLine("ProductID must be an integer");
+                        }
+                        catch (Exception e) {
+                            logger.Error(e.Message);
                         }
                     }
                     else if (choice == "9")// x edit a category
@@ -518,24 +517,11 @@ namespace NorthwindConsole
                             Console.ForegroundColor = ConsoleColor.White;  
                             logger.Error($"Incorrect datatype entered:");
                         }
+                        catch (Exception e) {
+                            logger.Error(e.Message);
+                        }
                     }
-                    else if (choice == "10")//display all cats
-                    {//... this is already # 1 or # 4
-
-                    }
-                    else if (choice == "11")//display all cats and their active products
-                    {                   
-                        //grab all cats include products.where discontinued ==false
-                    }
-                    else if (choice == "12")//display specific cat and all related active products
-                    {
-                        //ask for id
-                        Console.WriteLine("Enter CategoryID of the Category would you to like to display?");                          
-                        //check for id
-                        //get cat include products where discontinued == false
-                        //display
-                    }
-                    else if (choice == "13")// x delete products
+                    else if (choice == "10")// x delete products
                     {
                         //orphans are orderdetails rows
                         //just wipe em
@@ -583,7 +569,7 @@ namespace NorthwindConsole
                         }
                         Console.ForegroundColor = ConsoleColor.White;                    
                     }
-                    else if (choice == "14")// x delete catagories
+                    else if (choice == "11")// x delete catagories
                     {
                         //orphans are orderdetails rows
                         //just wipe em
