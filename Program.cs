@@ -34,9 +34,9 @@ namespace NorthwindConsole
                     //newstuff B threshold
                     //add Category... done?
                     Console.WriteLine("9) Edit Category");
-                    Console.WriteLine("10) Display All Categories (Name & Desc.)");
-                    Console.WriteLine("11) Display All Categories and their active Product Data");
-                    Console.WriteLine("12) Display a Category and its active Product data");
+                    Console.WriteLine("10)#1 Display All Categories (Name & Desc.)");
+                    Console.WriteLine("11)#4 Display All Categories and their active Product Data");
+                    Console.WriteLine("12)#3 Display a Category and its active Product data");
                     //A threshold
                     Console.WriteLine("13) Delete a Product");
                     Console.WriteLine("14) Delete a Category");
@@ -45,7 +45,7 @@ namespace NorthwindConsole
                     choice = Console.ReadLine();
                     Console.Clear();
                     logger.Info($"Option {choice} selected");
-                    if (choice == "1")//display cats
+                    if (choice == "1")// x display cats
                     {
                         var db = new NorthwindConsole_32_WHContext();
                         var query = db.Categories.OrderBy(p => p.CategoryName);
@@ -59,7 +59,7 @@ namespace NorthwindConsole
                         }
                         Console.ForegroundColor = ConsoleColor.White;
                     }
-                    else if (choice == "2")//add cats
+                    else if (choice == "2")// x add cats
                     {
                         Category category = new Category();
                         Console.WriteLine("Enter Category Name:");
@@ -95,7 +95,7 @@ namespace NorthwindConsole
                             }
                         }
                     }
-                    else if (choice == "3")//display cat+prod
+                    else if (choice == "3")// x display cat+prod
                     {
                         var db = new NorthwindConsole_32_WHContext();
                         var query = db.Categories.OrderBy(p => p.CategoryId);
@@ -119,21 +119,39 @@ namespace NorthwindConsole
                         Console.WriteLine($"{category.CategoryName} - {category.Description}");
                         foreach (Product p in category.Products)
                         {
-                            Console.WriteLine(p.ProductName);
+                            var d = p.Discontinued ? "DISCONTINUED" : "ACTIVE";
+                            if (!p.Discontinued) {
+                                Console.ForegroundColor =  p.Discontinued ?  ConsoleColor.Red : ConsoleColor.Green;
+                                Console.WriteLine($"[{p.ProductId}] {p.ProductName} Status:[{d}]");
+                                Console.WriteLine($"\tSupplier: {p.SupplierId}\tCategory: {p.CategoryId}");
+                                Console.WriteLine($"\tQtyPerUnit: {p.QuantityPerUnit}\tUnitPrice: {p.UnitPrice}");
+                                Console.WriteLine($"\tInStock: {p.UnitsInStock}\tOnOrder: {p.UnitsOnOrder}\tReorderLevel: {p.ReorderLevel}");
+                                Console.WriteLine();
+                            }
                         }
+                        Console.ForegroundColor = ConsoleColor.White;
                     }
                     else if (choice == "4")//display all cat+prod
                     {
                         var db = new NorthwindConsole_32_WHContext();
                         var query = db.Categories.Include("Products").OrderBy(p => p.CategoryId);
-                        foreach (var item in query)
+                        foreach (var cat in query)
                         {
-                            Console.WriteLine($"{item.CategoryName}");
-                            foreach (Product p in item.Products)
+                            Console.WriteLine($"{cat.CategoryId}) {cat.CategoryName}");
+                            foreach (Product p in cat.Products)
                             {
-                                Console.WriteLine($"\t{p.ProductName}");
+                                var d = p.Discontinued ? "DISCONTINUED" : "ACTIVE";
+                                if (!p.Discontinued) {
+                                    Console.ForegroundColor =  p.Discontinued ?  ConsoleColor.Red : ConsoleColor.Green;
+                                    Console.WriteLine($"[{p.ProductId}] {p.ProductName} Status:[{d}]");
+                                    Console.WriteLine($"\tSupplier: {p.SupplierId}\tCategory: {p.CategoryId}");
+                                    Console.WriteLine($"\tQtyPerUnit: {p.QuantityPerUnit}\tUnitPrice: {p.UnitPrice}");
+                                    Console.WriteLine($"\tInStock: {p.UnitsInStock}\tOnOrder: {p.UnitsOnOrder}\tReorderLevel: {p.ReorderLevel}");
+                                    Console.WriteLine();
+                                }
                             }
                         }
+                        Console.ForegroundColor = ConsoleColor.White;
                     }
                     else if (choice == "5")// x add a product
                     {
@@ -348,19 +366,85 @@ namespace NorthwindConsole
                             logger.Error($"Incorrect datatype entered:");
                         }
                     }
-                    else if (choice == "7")//display all products
+                    else if (choice == "7")// x display all products
                     {
-                        Console.WriteLine("What Products would you to like to display?");
-                        Console.WriteLine("1) All Products");
-                        Console.WriteLine("2) Active Products");
-                        Console.WriteLine("3) Discontinued Products");
-                        //display
+                        try {
+                            var db = new NorthwindConsole_32_WHContext();
+                            IEnumerable<Product> query2;
+                            Console.WriteLine("What Products would you to like to display?");
+                            Console.WriteLine("1) All Products");
+                            Console.WriteLine("2) Active Products");
+                            Console.WriteLine("3) Discontinued Products");
+                            int whatProducts = int.Parse(Console.ReadLine());
+                            //switch query based on input
+                            switch (whatProducts) {
+                                case 1 : 
+                                    query2 = db.Products; 
+                                    foreach(var p in query2) {
+                                        var d = p.Discontinued ? "DISCONTINUED" : "ACTIVE";
+                                        Console.ForegroundColor =  p.Discontinued ?  ConsoleColor.Red : ConsoleColor.Green;
+                                        Console.WriteLine($"[{p.ProductId}] {p.ProductName} Status:[{d}]");
+                                        Console.WriteLine($"\tSupplier: {p.SupplierId}\tCategory: {p.CategoryId}");
+                                        Console.WriteLine($"\tQtyPerUnit: {p.QuantityPerUnit}\tUnitPrice: {p.UnitPrice}");
+                                        Console.WriteLine($"\tInStock: {p.UnitsInStock}\tOnOrder: {p.UnitsOnOrder}\tReorderLevel: {p.ReorderLevel}");
+                                        Console.WriteLine();
+                                    }
+                                    break;
+                                case 2 : 
+                                    query2 = db.Products.Where(p => p.Discontinued == false); 
+                                    foreach(var p in query2) {
+                                        var d = p.Discontinued ? "DISCONTINUED" : "ACTIVE";
+                                        Console.ForegroundColor =  p.Discontinued ?  ConsoleColor.Red : ConsoleColor.Green;
+                                        Console.WriteLine($"[{p.ProductId}] {p.ProductName} Status:[{d}]");
+                                        Console.WriteLine($"\tSupplier: {p.SupplierId}\tCategory: {p.CategoryId}");
+                                        Console.WriteLine($"\tQtyPerUnit: {p.QuantityPerUnit}\tUnitPrice: {p.UnitPrice}");
+                                        Console.WriteLine($"\tInStock: {p.UnitsInStock}\tOnOrder: {p.UnitsOnOrder}\tReorderLevel: {p.ReorderLevel}");
+                                        Console.WriteLine();
+                                    }
+                                    break;
+                                case 3 : 
+                                    query2 = db.Products.Where(p => p.Discontinued == true); 
+                                    foreach(var p in query2) {
+                                        var d = p.Discontinued ? "DISCONTINUED" : "ACTIVE";
+                                        Console.ForegroundColor =  p.Discontinued ?  ConsoleColor.Red : ConsoleColor.Green;
+                                        Console.WriteLine($"[{p.ProductId}] {p.ProductName} Status:[{d}]");
+                                        Console.WriteLine($"\tSupplier: {p.SupplierId}\tCategory: {p.CategoryId}");
+                                        Console.WriteLine($"\tQtyPerUnit: {p.QuantityPerUnit}\tUnitPrice: {p.UnitPrice}");
+                                        Console.WriteLine($"\tInStock: {p.UnitsInStock}\tOnOrder: {p.UnitsOnOrder}\tReorderLevel: {p.ReorderLevel}");
+                                        Console.WriteLine();
+                                    }                                    
+                                    break;
+                                default : break;
+                            }
+                            Console.ForegroundColor = ConsoleColor.White;
+                        }catch (System.FormatException) {
+                            Console.WriteLine("ProductID must be an integer");
+                        }
                     }
-                    else if (choice == "8")//display specific product
+                    else if (choice == "8")// x display specific product
                     {
                         //ask for id
                         Console.WriteLine("Enter ProductID of the Product would you to like to display?");
-                        //display
+                        try {
+                            var db = new NorthwindConsole_32_WHContext();
+                            IEnumerable<Product> query2;
+
+                            int pid = int.Parse(Console.ReadLine());
+                            //switch query based on input
+                            query2 = db.Products.Where(p => p.ProductId == pid); 
+                            foreach(var p in query2) {
+                                var d = p.Discontinued ? "DISCONTINUED" : "ACTIVE";
+                                Console.ForegroundColor =  p.Discontinued ?  ConsoleColor.Red : ConsoleColor.Green;
+                                Console.WriteLine($"[{p.ProductId}] {p.ProductName} Status:[{d}]");
+                                Console.WriteLine($"\tSupplier: {p.SupplierId}\tCategory: {p.CategoryId}");
+                                Console.WriteLine($"\tQtyPerUnit: {p.QuantityPerUnit}\tUnitPrice: {p.UnitPrice}");
+                                Console.WriteLine($"\tInStock: {p.UnitsInStock}\tOnOrder: {p.UnitsOnOrder}\tReorderLevel: {p.ReorderLevel}");
+                                Console.WriteLine();
+                            }
+                            Console.ForegroundColor = ConsoleColor.White;
+                        }catch (System.FormatException) {
+                            Console.WriteLine("ProductID must be an integer");
+                        }
                     }
                     else if (choice == "9")// x edit a category
                     {
