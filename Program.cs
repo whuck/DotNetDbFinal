@@ -231,7 +231,7 @@ namespace NorthwindConsole
                         }
                         catch (System.FormatException)
                         {
-
+                            Console.ForegroundColor = ConsoleColor.White;  
                             logger.Error($"Incorrect datatype entered:");
                         }
                     }
@@ -353,16 +353,19 @@ namespace NorthwindConsole
                                 }
                                 else
                                 {
+                                    Console.ForegroundColor = ConsoleColor.White;  
                                     logger.Info("No Changes Entered.");
                                 }
                             }
                             else
                             {
+                                Console.ForegroundColor = ConsoleColor.White;  
                                 logger.Error($"ProductID: {pid} not found/valid");
                             }
                         }
                         catch (System.FormatException)
                         {
+                            Console.ForegroundColor = ConsoleColor.White;  
                             logger.Error($"Incorrect datatype entered:");
                         }
                     }
@@ -418,6 +421,7 @@ namespace NorthwindConsole
                             }
                             Console.ForegroundColor = ConsoleColor.White;
                         }catch (System.FormatException) {
+                            Console.ForegroundColor = ConsoleColor.White;  
                             Console.WriteLine("ProductID must be an integer");
                         }
                     }
@@ -443,6 +447,7 @@ namespace NorthwindConsole
                             }
                             Console.ForegroundColor = ConsoleColor.White;
                         }catch (System.FormatException) {
+                            Console.ForegroundColor = ConsoleColor.White;  
                             Console.WriteLine("ProductID must be an integer");
                         }
                     }
@@ -498,16 +503,19 @@ namespace NorthwindConsole
                                 }
                                 else
                                 {
+                                    Console.ForegroundColor = ConsoleColor.White;  
                                     logger.Info("No Changes Entered.");
                                 }
                             }
                             else
                             {
+                                Console.ForegroundColor = ConsoleColor.White;  
                                 logger.Error($"ProductID: {cid} not found/valid");
                             }
                         }
                         catch (System.FormatException)
                         {
+                            Console.ForegroundColor = ConsoleColor.White;  
                             logger.Error($"Incorrect datatype entered:");
                         }
                     }
@@ -527,31 +535,117 @@ namespace NorthwindConsole
                         //get cat include products where discontinued == false
                         //display
                     }
-                    else if (choice == "13")//delete products
+                    else if (choice == "13")// x delete products
                     {
                         //orphans are orderdetails rows
                         //just wipe em
-                        //ask for pID
-                        Console.WriteLine("Enter ProductID of the Product would you to like to DELETE?");
-                        //delete rows from orderdetails first
-                        //delete product
+                        
+                        try
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            var db = new NorthwindConsole_32_WHContext();
+                            Console.WriteLine("Enter ProductID of the Product would you to like to DELETE?");
+                            int pid = int.Parse(Console.ReadLine());
+                            //grab from db
+                            Product product = db.Products.SingleOrDefault(p => p.ProductId == pid);
+                            
+                            if (product != null)
+                            {
+                                var orderDetails = db.OrderDetails.Where(o => o.ProductId == product.ProductId);
+                                Console.WriteLine($"Found {orderDetails.Count()} OrderDetails orphans");
+                                Console.WriteLine($"Deleting Product {product.ProductName} will delete these as well are you sure? Y/N");
+                                string amSure = Console.ReadLine().ToUpper();
+
+                                if (amSure=="Y")
+                                {
+                                    db.OrderDetails.RemoveRange(db.OrderDetails.Where(x=>x.ProductId==product.ProductId));
+                                    logger.Info($"OrderDetails with ProductId{product.ProductId} deleted!");
+                                    db.SaveChanges();
+                                    db.DeleteProduct(product);
+                                    logger.Info($"Product - {product.ProductName} deleted!");
+                                }
+                                else
+                                {
+                                    logger.Info("Deletion canceled.");
+                                }
+                            }
+                            else
+                            {
+                                logger.Error($"ProductID: {pid} not found/valid");
+                            }
+                        }
+                        catch (System.FormatException)
+                        {
+                            Console.ForegroundColor = ConsoleColor.White;  
+                            logger.Error($"Incorrect datatype entered:");
+                        }
+                        Console.ForegroundColor = ConsoleColor.White;                    
                     }
                     else if (choice == "14")//delete catagories
                     {
-                        Console.WriteLine("Enter CategoryID of the Category would you to like to DELETE?");
-                        //loads of product orphans
+                        //orphans are orderdetails rows
                         //just wipe em
-                        //ask for cID
-                        //get pIDs for cID
-                        //delete product rows from orderdetails
-                        //delete products
-                        //delete category
+                        
+                        try
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            var db = new NorthwindConsole_32_WHContext();
+                            Console.WriteLine("Enter CategoryId of the Category would you to like to DELETE?");
+                            int cid = int.Parse(Console.ReadLine());
+                            //grab from db
+                            Category category = db.Categories.SingleOrDefault(c => c.CategoryId == cid);
+                            
+                            if (category != null)
+                            {
+                                var orderDetails = db.OrderDetails.Where(o => o.ProductId == category.CategoryId);
+                                // var orderDetails = db.OrderDetails
+                                //                     .Join(db.Products,
+                                //                         o => o.ProductId,
+                                //                         p => p.ProductId,
+                                //                         (o,p) => new {OrderDetail = o, Product = p })
+                                //                     .Where(asdf=> asdf.CategoryId == cid);
+                                var products = db.Products.Where(p=>p.CategoryId == cid);
+                                Console.WriteLine($"Found {orderDetails.Count()} OrderDetail orphans");
+                                Console.WriteLine($"Found {products.Count()} Product orphans");
+                                Console.WriteLine($"Deleting Product {category.CategoryId} will delete these as well are you sure? Y/N");
+                                string amSure = Console.ReadLine().ToUpper();
+
+                                if (amSure=="Y")
+                                {
+                                    db.OrderDetails.RemoveRange(db.OrderDetails.Where(x=>x.ProductId==category.CategoryId));
+                                    logger.Info($"OrderDetails with CategoryId{category.CategoryId} deleted!");
+                                    db.SaveChanges();
+
+                                    db.Products.RemoveRange(db.Products.Where(p=>p.CategoryId==category.CategoryId));
+                                    logger.Info($"Products with CategoryId{category.CategoryId} deleted!");
+                                    db.SaveChanges();
+
+                                    db.DeleteCategory(category);
+                                    logger.Info($"category - {category.CategoryName} deleted!");
+                                }
+                                else
+                                {
+                                    logger.Info("Deletion canceled.");
+                                }
+                            }
+                            else
+                            {
+                                logger.Error($"CategoryId: {cid} not found/valid");
+                            }
+                        }
+                        catch (System.FormatException)
+                        {
+                            Console.ForegroundColor = ConsoleColor.White;  
+                            logger.Error($"Incorrect datatype entered:");
+                        }
+                        Console.ForegroundColor = ConsoleColor.White;  
                     }
                     Console.WriteLine();
                 } while (choice.ToLower() != "q");
             }
             catch (Exception ex)
             {
+                Console.ForegroundColor = ConsoleColor.White;  
                 logger.Error(ex.Message);
             }
             logger.Info("Program ended");
