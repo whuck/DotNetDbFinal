@@ -26,18 +26,13 @@ namespace NorthwindConsole
                     Console.WriteLine("2) Add Category");
                     Console.WriteLine("3) Display a Category and its active Product data");
                     Console.WriteLine("4) Display All Categories and their active Product Data");
-                    //newstuff C threshold
                     Console.WriteLine("5) Add Product");
                     Console.WriteLine("6) Edit Product");
                     Console.WriteLine("7) Display All Products");
                     Console.WriteLine("8) Display a Product");
-                    //newstuff B threshold
-                    //add Category... done?
                     Console.WriteLine("9) Edit Category");
-                    //A threshold
                     Console.WriteLine("10) Delete a Product");
                     Console.WriteLine("11) Delete a Category");
-                    //use data annotations and handle ALL errors
                     Console.WriteLine("\"q\" to quit");
                     choice = Console.ReadLine();
                     Console.Clear();
