@@ -375,9 +375,9 @@ namespace NorthwindConsole
                                         var d = p.Discontinued ? "DISCONTINUED" : "ACTIVE";
                                         Console.ForegroundColor =  p.Discontinued ?  ConsoleColor.Red : ConsoleColor.Green;
                                         Console.WriteLine($"[{p.ProductId}] {p.ProductName} Status:[{d}]");
-                                        Console.WriteLine($"\tSupplier: {p.SupplierId}\tCategory: {p.CategoryId}");
-                                        Console.WriteLine($"\tQtyPerUnit: {p.QuantityPerUnit}\tUnitPrice: {p.UnitPrice}");
-                                        Console.WriteLine($"\tInStock: {p.UnitsInStock}\tOnOrder: {p.UnitsOnOrder}\tReorderLevel: {p.ReorderLevel}");
+                                        // Console.WriteLine($"\tSupplier: {p.SupplierId}\tCategory: {p.CategoryId}");
+                                        // Console.WriteLine($"\tQtyPerUnit: {p.QuantityPerUnit}\tUnitPrice: {p.UnitPrice}");
+                                        // Console.WriteLine($"\tInStock: {p.UnitsInStock}\tOnOrder: {p.UnitsOnOrder}\tReorderLevel: {p.ReorderLevel}");
                                         Console.WriteLine();
                                     }
                                     break;
@@ -387,9 +387,9 @@ namespace NorthwindConsole
                                         var d = p.Discontinued ? "DISCONTINUED" : "ACTIVE";
                                         Console.ForegroundColor =  p.Discontinued ?  ConsoleColor.Red : ConsoleColor.Green;
                                         Console.WriteLine($"[{p.ProductId}] {p.ProductName} Status:[{d}]");
-                                        Console.WriteLine($"\tSupplier: {p.SupplierId}\tCategory: {p.CategoryId}");
-                                        Console.WriteLine($"\tQtyPerUnit: {p.QuantityPerUnit}\tUnitPrice: {p.UnitPrice}");
-                                        Console.WriteLine($"\tInStock: {p.UnitsInStock}\tOnOrder: {p.UnitsOnOrder}\tReorderLevel: {p.ReorderLevel}");
+                                        // Console.WriteLine($"\tSupplier: {p.SupplierId}\tCategory: {p.CategoryId}");
+                                        // Console.WriteLine($"\tQtyPerUnit: {p.QuantityPerUnit}\tUnitPrice: {p.UnitPrice}");
+                                        // Console.WriteLine($"\tInStock: {p.UnitsInStock}\tOnOrder: {p.UnitsOnOrder}\tReorderLevel: {p.ReorderLevel}");
                                         Console.WriteLine();
                                     }
                                     break;
@@ -399,9 +399,9 @@ namespace NorthwindConsole
                                         var d = p.Discontinued ? "DISCONTINUED" : "ACTIVE";
                                         Console.ForegroundColor =  p.Discontinued ?  ConsoleColor.Red : ConsoleColor.Green;
                                         Console.WriteLine($"[{p.ProductId}] {p.ProductName} Status:[{d}]");
-                                        Console.WriteLine($"\tSupplier: {p.SupplierId}\tCategory: {p.CategoryId}");
-                                        Console.WriteLine($"\tQtyPerUnit: {p.QuantityPerUnit}\tUnitPrice: {p.UnitPrice}");
-                                        Console.WriteLine($"\tInStock: {p.UnitsInStock}\tOnOrder: {p.UnitsOnOrder}\tReorderLevel: {p.ReorderLevel}");
+                                        // Console.WriteLine($"\tSupplier: {p.SupplierId}\tCategory: {p.CategoryId}");
+                                        // Console.WriteLine($"\tQtyPerUnit: {p.QuantityPerUnit}\tUnitPrice: {p.UnitPrice}");
+                                        // Console.WriteLine($"\tInStock: {p.UnitsInStock}\tOnOrder: {p.UnitsOnOrder}\tReorderLevel: {p.ReorderLevel}");
                                         Console.WriteLine();
                                     }                                    
                                     break;
