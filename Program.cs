@@ -11,6 +11,7 @@ namespace NorthwindConsole
 {
     class Program
     {
+        private static NorthwindConsole_32_WHContext db = new NorthwindConsole_32_WHContext();
         // create static instance of Logger
         private static NLog.Logger logger = NLogBuilder.ConfigureNLog(Directory.GetCurrentDirectory() + "\\nlog.config").GetCurrentClassLogger();
         static void Main(string[] args)
@@ -39,7 +40,7 @@ namespace NorthwindConsole
                     logger.Info($"Option {choice} selected");
                     if (choice == "1")// x display cats
                     {
-                        var db = new NorthwindConsole_32_WHContext();
+                        //var db = new NorthwindConsole_32_WHContext();
                         var query = db.Categories.OrderBy(p => p.CategoryName);
 
                         Console.ForegroundColor = ConsoleColor.Green;
@@ -65,7 +66,7 @@ namespace NorthwindConsole
                         var isValid = Validator.TryValidateObject(category, context, results, true);
                         if (isValid)
                         {
-                            var db = new NorthwindConsole_32_WHContext();
+                            //var db = new NorthwindConsole_32_WHContext();
                             // check for unique name
                             if (db.Categories.Any(c => c.CategoryName == category.CategoryName))
                             {
@@ -77,6 +78,7 @@ namespace NorthwindConsole
                             {
                                 logger.Info("Validation passed");
                                 db.AddCategory(category);
+                                logger.Info("category added");
                             }
                         }
                         if (!isValid)
@@ -89,7 +91,7 @@ namespace NorthwindConsole
                     }
                     else if (choice == "3")// x display cat+prod
                     {
-                        var db = new NorthwindConsole_32_WHContext();
+                        //var db = new NorthwindConsole_32_WHContext();
                         var query = db.Categories.OrderBy(p => p.CategoryId);
 
                         Console.WriteLine("Select the category whose products you want to display:");
@@ -125,7 +127,7 @@ namespace NorthwindConsole
                     }
                     else if (choice == "4")// x display all cat+prod
                     {
-                        var db = new NorthwindConsole_32_WHContext();
+                        //var db = new NorthwindConsole_32_WHContext();
                         var query = db.Categories.Include("Products").OrderBy(p => p.CategoryId);
                         foreach (var cat in query)
                         {
@@ -176,7 +178,7 @@ namespace NorthwindConsole
                             var isValid = Validator.TryValidateObject(product, context, results, true);
                             if (isValid)
                             {
-                                var db = new NorthwindConsole_32_WHContext();
+                                //var db = new NorthwindConsole_32_WHContext();
                                 // db = new NorthwindConsole_32_WHContext();
                                 // check for unique name
                                 if (db.Products.Any(c => c.ProductName == product.ProductName))
@@ -225,7 +227,7 @@ namespace NorthwindConsole
                         //Product product = new Product();
                         try
                         {
-                            var db = new NorthwindConsole_32_WHContext();
+                            //var db = new NorthwindConsole_32_WHContext();
                             Console.WriteLine("Enter ProductID of Product to Edit:");
                             int pid = int.Parse(Console.ReadLine());
                             //grab from db
@@ -360,7 +362,7 @@ namespace NorthwindConsole
                     else if (choice == "7")// x display all products
                     {
                         try {
-                            var db = new NorthwindConsole_32_WHContext();
+                            //var db = new NorthwindConsole_32_WHContext();
                             IEnumerable<Product> query2;
                             Console.WriteLine("What Products would you to like to display?");
                             Console.WriteLine("1) All Products");
@@ -421,7 +423,7 @@ namespace NorthwindConsole
                         //ask for id
                         Console.WriteLine("Enter ProductID of the Product would you to like to display?");
                         try {
-                            var db = new NorthwindConsole_32_WHContext();
+                            //var db = new NorthwindConsole_32_WHContext();
                             IEnumerable<Product> query2;
 
                             int pid = int.Parse(Console.ReadLine());
@@ -450,7 +452,7 @@ namespace NorthwindConsole
                         //Product product = new Product();
                         try
                         {
-                            var db = new NorthwindConsole_32_WHContext();
+                            //var db = new NorthwindConsole_32_WHContext();
                             Console.WriteLine("Enter CategoryID of Category to Edit:");
                             int cid = int.Parse(Console.ReadLine());
                             //grab from db
@@ -523,7 +525,7 @@ namespace NorthwindConsole
                         try
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            var db = new NorthwindConsole_32_WHContext();
+                            //var db = new NorthwindConsole_32_WHContext();
                             Console.WriteLine("Enter ProductID of the Product would you to like to DELETE?");
                             int pid = int.Parse(Console.ReadLine());
                             //grab from db
@@ -572,7 +574,7 @@ namespace NorthwindConsole
                         try
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            var db = new NorthwindConsole_32_WHContext();
+                            //var db = new NorthwindConsole_32_WHContext();
                             Console.WriteLine("Enter CategoryId of the Category would you to like to DELETE?");
                             int cid = int.Parse(Console.ReadLine());
                             //grab from db
